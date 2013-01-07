@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps JavaScript API v3 Example: Map Simple</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <style type="text/css">
+      html, body, #map_canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+    <script type="text/javascript"	src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBDMalyn_w4jqj61RzOkgH_jbC6KLtm7X4&sensor=false"></script>
+    <script type="text/javascript">
+      var map;
+	  var startpt = new google.maps.LatLng(38.247891, -78.050343);
+	  var cpDrift = new google.maps.LatLng(38.24684, -78.06511);
+	  var ffDrift = new google.maps.LatLng(38.24672, -78.07050);
+	  var homeMarker;
+	  var cpMarker;
+	  var ffMarker;
+	  var CPDriftCoordinates;
+	  var FFDriftCoordinates;
+	  var CPDriftPath
+	  var FFDriftPath
+	
+	  function addFreefallDrift() {
+			CPDriftPath.setMap(map);
+			FFDriftPath.setMap(map);
+			ffMarker.setMap(map);
+			cpMarker.setMap(map);
+	  }
+	  function addCanopyDrift() {
+			CPDriftPath.setMap(map);
+			cpMarker.setMap(map);
+	  }
+	  function addOverlays(){
+		addCanopyDrift();
+		addFreefallDrift();
+	  }
+      function initialize() {
+        var myOptions = {
+          zoom: 17,
+          	center: new google.maps.LatLng(38.247891, -78.050343),
+		    mapTypeId: google.maps.MapTypeId.HYBRID
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'),
+            myOptions);
+
+		homeMarker = new google.maps.Marker({
+			position: startpt,
+		    title:"Goal"
+		});
+			
+		cpMarker = new google.maps.Marker({
+			position: cpDrift,
+	     	title:"Opening Point"
+	  	});
+	
+		ffMarker = new google.maps.Marker({
+			position: ffDrift,
+			map: map,
+	     	title:"Exit Point"
+	  	});
+	
+		CPDriftCoordinates = [
+			startpt,
+			cpDrift
+		];
+		FFDriftCoordinates = [
+			cpDrift,
+			ffDrift
+		];
+		
+		var CPDriftPath = new google.maps.Polyline({
+			path: CPDriftCoordinates,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		var FFDriftPath = new google.maps.Polyline({
+			path: FFDriftCoordinates,
+			strokeColor: "#FFFFFF",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		
+		//addOverlays();
+      }
+		/**
+		 * Returns the destination point from this point having travelled the given distance (in km) on the 
+		 * given initial bearing (bearing may vary before destination is reached)
+		 *
+		 *   see http://williams.best.vwh.net/avform.htm#LL
+		 *
+		 * @param   {Number} brng: Initial bearing in degrees
+		 * @param   {Number} dist: Distance in km
+		 * @returns {LatLon} Destination point
+		 */
+		LatLon.prototype.destinationPoint = function(brng, dist) {
+		  dist = typeof(dist)=='number' ? dist : typeof(dist)=='string' && dist.trim()!='' ? +dist : NaN;
+		  dist = dist/this._radius;  // convert dist to angular distance in radians
+		  brng = brng.toRad();  // 
+		  var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
+
+		  var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) + 
+		                        Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
+		  var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), 
+		                               Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+		  lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+
+		  return new LatLon(lat2.toDeg(), lon2.toDeg());
+		}
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+  </body>
+</html>

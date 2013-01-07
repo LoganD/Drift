@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBDMalyn_w4jqj61RzOkgH_jbC6KLtm7X4&sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+		var map;
+		var startpt = new google.maps.LatLng(38.247891, -78.050343);
+		var cpDrift = new google.maps.LatLng(38.24684, -78.06511);
+		var ffDrift = new google.maps.LatLng(38.24672, -78.07050);
+        var myOptions = {
+          center: startpt,
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.HYBRID
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+		
+		var homeMarker = new google.maps.Marker({
+			position: startpt,
+			map: map,
+	     	title:"Goal"
+		});
+
+		var cpMarker = new google.maps.Marker({
+			position: cpDrift,
+			map: map,
+	     	title:"Freefall Goal"
+		 });
+		var ffMarker = new google.maps.Marker({
+			position: ffDrift,
+			map: map,
+			title:"Exit Point"
+		 });
+
+		var CPDriftCoordinates = [
+			startpt,
+			cpDrift
+		];
+		var FFDriftCoordinates = [
+			cpDrift,
+			ffDrift
+		];
+		var CPDriftPath = new google.maps.Polyline({
+			path: CPDriftCoordinates,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		var FFDriftPath = new google.maps.Polyline({
+			path: FFDriftCoordinates,
+			strokeColor: "#FFFFFF",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+
+		CPDriftPath.setMap(map);
+		FFDriftPath.setMap(map);
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas" style="width:100%; height:100%"></div>
+  </body>
+</html>
